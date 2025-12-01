@@ -54,7 +54,7 @@
         import { getFirestore, doc, addDoc, onSnapshot, collection, query, serverTimestamp, orderBy, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 🚨🚨🚨 【已更新】 Firebase 專案配置 🚨🚨🚨
+        // Firebase 專案配置 (已由使用者提供)
         const firebaseConfig = {
             apiKey: "AIzaSyB7hxgHvimSvB3dLlAxzJ_L9X13sBBlySk",
             authDomain: "abbb-a76bd.firebaseapp.com",
@@ -255,11 +255,11 @@
                     { time: '08:30', name: '星巴克 涯月店', type: '餐廳', category: 'restaurant', note: '喝限定特調', coords: { lat: 33.4682, lng: 126.3105 } },
                     { time: '10:30', name: 'Noraba 海鮮拉麵', type: '餐廳', category: 'restaurant', note: '戶外看海吃麵', coords: { lat: 33.4735, lng: 126.3142 } },
                     { time: '12:30', name: 'Mood & Slo-mo', type: '景點', category: 'attraction', note: '翰林質感選物店逛街', coords: { lat: 33.4110, lng: 126.3180 } },
-                    { time: '14:30', name: '挾才海水浴場', type: '景點', category: 'attraction', note: '果凍海拍照', coords: { lat: 33.3916, lng: 126.2366 } },
+                    { time: '14:30', name: '挾才海水浴場', type: '景點', category: 'attraction', coords: { lat: 33.3916, lng: 126.2366 } },
                     { time: '16:00', name: 'Hello Kitty Island', type: '景點', category: 'attraction', coords: { lat: 33.3031, lng: 126.4718 } },
                     { time: '18:30', name: '熟成到 涯月店', type: '餐廳', category: 'restaurant', note: '記得預約！', coords: { lat: 33.4682, lng: 126.3105 } },
-                    { time: '20:30', name: 'Poniente 民宿', type: '住宿', category: 'etc', note: '辦理入住手續', coords: { lat: 33.4750, lng: 126.3200 } },
-                    { time: '宵夜', name: 'Puradak 炸雞', type: '美食', category: 'restaurant', note: '必點: 紫菜海苔口味', coords: { lat: 33.4750, lng: 126.3200 } } // 新增座標
+                    { time: '20:30', name: 'Poniente 民宿', type: '住宿', category: 'etc', coords: { lat: 33.4750, lng: 126.3200 } },
+                    { time: '宵夜', name: 'Puradak 炸雞', type: '美食', category: 'restaurant', note: '必點: 紫菜海苔口味', coords: { lat: 33.4750, lng: 126.3200 } }
                 ]
             },
             day2: {
@@ -267,7 +267,6 @@
                 title: 'Day 2天 (12/7) - 南部&市區：室內躲雨與文創探索',
                 weather: { emoji: '🌧️', text: '預報下雨', temp: '10°C', location: '西歸浦/濟州市區' },
                 locations: [
-                    // *** 橘花閨樓：地址和備註已更新 ***
                     { 
                         time: '10:30', 
                         name: '橘花閨樓', 
@@ -308,16 +307,15 @@
             }
         };
         
-        // --- 全局常數 ---
+        // --- 全局常數 (使用者清單) ---
         const KRW_TO_TWD_RATE = 0.024; // 1 KRW ≈ 0.024 TWD (模擬匯率)
-        const USERS = ['Karen', 'Zuzu', 'Yuki', 'Mindy'];
+        const USERS = ['Karen', 'Zuzu', 'Yuki', 'Mindy']; // 固定的使用者名單
 
 
         // --- 全局狀態與初始化 ---
         document.addEventListener('DOMContentLoaded', () => {
             // 確保行程資料載入
             window.state.itineraryData = itineraryData;
-            // 初始渲染頂部標籤 (這裡不能調用 initAppAfterAuth，因為需要等待 Firebase 載入)
         });
 
         window.initAppAfterAuth = () => {
@@ -341,8 +339,27 @@
             }
         };
 
+        // --- 輔助函式：顯示錯誤/成功訊息 (取代 alert) ---
+        function displayMessage(message, type = 'error') {
+            const msgElement = document.getElementById('form-message');
+            if (!msgElement) return;
 
-        // --- 核心 UI 渲染功能 ---
+            msgElement.textContent = message;
+            msgElement.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800');
+
+            if (type === 'error') {
+                msgElement.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
+            } else if (type === 'success') {
+                msgElement.classList.add('bg-green-100', 'text-green-800', 'border-green-300');
+            }
+
+            setTimeout(() => {
+                msgElement.classList.add('hidden');
+            }, 4000);
+        }
+
+
+        // --- 核心 UI 渲染功能 (未變動) ---
 
         // 渲染主內容（根據當前分頁）
         window.renderAppContent = (pageKey) => {
@@ -400,7 +417,7 @@
             });
         }
 
-        // 渲染每日行程 (已移除區域總覽地圖)
+        // 渲染每日行程 (未變動)
         window.renderDailyItinerary = (dayKey) => {
             const dayData = itineraryData[dayKey];
             const contentContainer = document.getElementById('content-container');
@@ -417,25 +434,17 @@
             });
         }
 
-        // --- 行前準備與注意事項 渲染 (新) ---
-
-        /**
-         * Toggles the checked status of a checklist item.
-         */
+        // --- 行前準備與注意事項 渲染 (未變動) ---
         window.toggleChecklistItem = (itemKey) => {
-            // 由於 checklist 儲存在 state 中，我們直接更新狀態並重新渲染
             const currentStatus = window.state.checklist[itemKey];
             if (currentStatus !== undefined) {
                 window.state.checklist[itemKey] = !currentStatus;
             }
             if (window.state.activePage === 'prep' && window.renderPrepPage) {
-                window.renderPrepPage(); // 重新渲染頁面以顯示更新
+                window.renderPrepPage(); 
             }
         }
 
-        /**
-         * Renders the Checklist (行前準備及注意事項) page.
-         */
         window.renderPrepPage = () => {
             const checklist = window.state.checklist;
             const contentContainer = document.getElementById('content-container');
@@ -443,13 +452,10 @@
 
             let checklistHTML = '';
             for (const [text, checked] of Object.entries(checklist)) {
-                // SVG for the checkbox icon (Lucide icons: Square and CheckSquare)
                 const iconSVG = checked
                     ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-green-600 mr-3"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`
                     : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-gray-400 mr-3"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/></svg>`;
 
-                // 使用 window.toggleChecklistItem 確保函數可存取
-                // 調整卡片背景和文字顏色以適應淺色主題
                 checklistHTML += `
                     <li onclick="window.toggleChecklistItem('${text}')" class="flex items-center p-4 mb-3 bg-gray-100 rounded-xl shadow-md cursor-pointer hover:shadow-lg transition duration-150 ease-in-out border ${checked ? 'border-green-400' : 'border-gray-300'}">
                         ${iconSVG}
@@ -458,8 +464,6 @@
                 `;
             }
 
-            // HTML content for the entire preparation page
-            // 調整標題和內容區塊的背景和文字顏色
             contentContainer.innerHTML = `
                 <div class="space-y-8">
                     <h2 class="text-3xl font-extrabold text-gray-900 border-b-4 border-primary-blue pb-2">📝 行前準備及注意事項</h2>
@@ -489,9 +493,8 @@
         }
 
 
-        // --- 行程輔助渲染函數 (已更新導航按鈕) ---
+        // --- 行程輔助渲染函數 (未變動) ---
         function createWeatherCard(dayData) {
-            // 天氣卡片保持藍色漸變，不受背景影響
             return `
                 <div class="bg-gradient-to-r from-primary-blue to-blue-400 text-white p-5 rounded-xl shadow-lg mb-4">
                     <h2 class="text-2xl font-bold mb-1">${dayData.title}</h2>
@@ -521,7 +524,6 @@
             const category = location.category || location.type || 'etc';
             const categoryLabel = categoryMap[category] || categoryMap[location.type] || '其他';
             
-            // 根據 category 獲取背景顏色類別，並確保文本在淺色背景下有良好的對比度
             let bgColorClass;
             let labelColorClass = 'text-gray-900';
             switch(category) {
@@ -534,19 +536,12 @@
             const key = `${dayKey}-${index}`;
             const isGuideLoaded = window.state.guideCache[key];
 
-            // KakaoMap 導航/搜索使用名稱 (在韓國最準確)
             const encodedName = encodeURIComponent(location.name);
-            // Google Map 搜索優先使用地址 (如果存在)，否則使用名稱
             const encodedGoogleQuery = encodeURIComponent(location.address || location.name);
             
-            // 檢查是否有座標，決定按鈕數量和 Grid 佈局
             const hasCoords = !!location.coords;
-            // 讓手機上堆疊 (grid-cols-1)，平板/桌面三分均等 (md:grid-cols-3)
-            // *** 這裡是最關鍵的修改，確保按鈕等寬！ ***
             const gridContainerClass = hasCoords ? 'grid grid-cols-1 gap-2 mt-4 md:grid-cols-3' : 'grid grid-cols-1 gap-2 mt-4';
 
-
-            // 調整卡片背景和文字顏色
             return `
                 <div class="bg-white p-4 rounded-xl shadow-lg overflow-hidden border border-gray-100">
                     <div class="flex items-start">
@@ -559,14 +554,12 @@
                             ${location.note ? `<p class="text-sm text-gray-500 mt-1">${location.note}</p>` : ''}
                             
                             <!-- 導遊職責/故事區塊 -->
-                            <!-- 調整文字顏色 -->
                             <div id="guide-${key}" class="mt-3 space-y-2 text-gray-700">
                                 ${isGuideLoaded ? isGuideLoaded : '<div class="text-sm text-gray-500 italic">點擊下方按鈕獲取導覽資訊...</div>'}
                             </div>
 
-                            <!-- *** 修改這裡：使用 grid 確保三等分 (手機上堆疊) *** -->
                             <div class="${gridContainerClass}">
-                                <!-- 導遊職責按鈕 (刪除尺寸/間距相關 class) -->
+                                <!-- 導遊職責按鈕 -->
                                 <button onclick="fetchGuideDetails('${dayKey}', ${index})" 
                                         class="bg-secondary-light text-primary-blue text-sm font-semibold py-2 rounded-full hover:bg-blue-200 transition duration-150">
                                     ${isGuideLoaded ? '收起導覽' : '導遊職責 📜'}
@@ -574,7 +567,7 @@
                                 
                                 <!-- 導航/搜索按鈕組 (僅限有座標的) -->
                                 ${hasCoords ? `
-                                    <!-- 1. KakaoMap 導航 (現改為名稱搜索) (刪除尺寸/間距相關 class) -->
+                                    <!-- 1. KakaoMap 導航 -->
                                     <a href="https://map.kakao.com/link/search/${encodedName}" target="_blank"
                                        class="bg-yellow-400 text-gray-900 text-sm font-semibold py-2 rounded-full text-center hover:bg-yellow-500 transition duration-150 flex items-center justify-center">
                                         <!-- Map Icon -->
@@ -583,7 +576,7 @@
                                         </svg>
                                         KakaoMap
                                     </a>
-                                    <!-- 2. Google Map 搜索 (優先使用地址) (刪除尺寸/間距相關 class) -->
+                                    <!-- 2. Google Map 搜索 -->
                                     <a href="https://www.google.com/maps/search/?api=1&query=${encodedGoogleQuery}" target="_blank"
                                        class="bg-blue-100 text-primary-blue text-sm font-semibold py-2 rounded-full text-center hover:bg-blue-200 transition duration-150 flex items-center justify-center">
                                         <!-- Search Icon (Magnifying Glass) -->
@@ -600,11 +593,9 @@
             `;
         }
         
-        // --- 導遊職責 (LLM) 模擬功能 (已更新東門市場和史努比博物館的內容) ---
+        // --- 導遊職責 (LLM) 模擬功能 (未變動) ---
         function getMockGuideContent(locationName) {
-            // 調整導覽區塊的背景和文字顏色
             const guideBg = 'bg-gray-100';
-            const mainText = 'text-gray-700';
             const smallText = 'text-gray-500';
             
             const createGuideDiv = (content) => `<div class="${guideBg} p-3 rounded-lg border-l-4 border-primary-blue">
@@ -711,7 +702,6 @@
                         </ul>`),
                     key: 'Tangerine-Cafe-2025'
                 },
-                // --- 更新：濟州東門市場 ---
                 '濟州東門市場': {
                     guide: createGuideDiv(`<p>濟州東門市場是濟州市最大的傳統市場之一，夜市部分非常熱鬧，尤其以海鮮和街頭小吃聞名。晚上來這裡可以大飽口福。</p>
                         <p class="mt-2 text-sm ${smallText}">【攻略提示】</p>
@@ -730,7 +720,6 @@
                         </ul>`),
                     key: 'Brunch-2025'
                 },
-                // --- 更新：Snoopy Garden ---
                 'Snoopy Garden 스누피가든': {
                     guide: createGuideDiv(`<p>Snoopy Garden (史努比花園) 戶外花園佔地廣大，完美呈現了《花生漫畫》中的各種場景。無論室內室外，都是史努比粉絲必訪之地。</p>
                         <p class="mt-2 text-sm ${smallText}">【攻略提示】</p>
@@ -750,7 +739,7 @@
                     key: 'Puradak-Chicken-2025'
                 },
                 default: {
-                    guide: createGuideDiv(`<p class="${mainText}">【${locationName} 導覽分析】這是一個值得探索的好地方！別忘了拍照留念，並享受這難得的時光。</p>
+                    guide: createGuideDiv(`<p class="text-gray-700">【${locationName} 導覽分析】這是一個值得探索的好地方！別忘了拍照留念，並享受這難得的時光。</p>
                         <p class="text-xs italic mt-1 ${smallText}">（此為通用模擬內容。若有特定美食/伴手禮/代號，系統會自動亮顯）</p>`),
                     key: 'Default-Guide-2025'
                 }
@@ -767,13 +756,10 @@
 
             // 緩存和收起邏輯
             if (window.state.guideCache[key]) {
-                // 如果已經顯示，則收起
                 if (targetElement.innerHTML.includes('【攻略提示】') || targetElement.innerHTML.includes('（此為通用模擬內容')) {
-                     // 這是已展開的狀態，切換回收起狀態
                     window.state.guideCache[key] = null; // 清除緩存以便下次重新載入
                     targetElement.innerHTML = '<div class="text-sm text-gray-500 italic">點擊下方按鈕獲取導覽資訊...</div>';
                 } else {
-                    // 這是收起狀態，應該顯示緩存內容 (雖然這裡的邏輯有點混亂，但我們遵循收起/展開的意圖)
                     targetElement.innerHTML = window.state.guideCache[key];
                 }
                 // 重新渲染卡片以更新按鈕文字
@@ -796,20 +782,32 @@
             window.renderDailyItinerary(window.state.activePage);
         }
 
-        // --- 分帳/費用功能渲染 (更新為淺色主題) ---
+        // --- 分帳/費用功能渲染 (主要修改區塊) ---
 
         window.renderExpensePage = () => {
             const contentContainer = document.getElementById('content-container');
             if (!contentContainer) return;
+
+            // 產生參與者勾選框的 HTML
+            const participantCheckboxesHtml = USERS.map(user => `
+                <label class="inline-flex items-center cursor-pointer">
+                    <!-- 預設全部勾選 -->
+                    <input type="checkbox" name="participant" value="${user}" checked class="form-checkbox h-5 w-5 text-primary-blue rounded border-gray-300 focus:ring-primary-blue">
+                    <span class="ml-2 text-gray-700 font-medium">${user}</span>
+                </label>
+            `).join('');
             
             // 調整背景和主要文字顏色
             contentContainer.innerHTML = `
                 <div class="bg-white p-4 rounded-xl shadow-lg mb-4 text-gray-900 border border-gray-100">
-                    <h2 class="text-2xl font-bold text-primary-blue mb-4">分帳紀錄與結算</h2>
+                    <h2 class="text-2xl font-bold text-primary-blue mb-4">分帳紀錄與結算 (彈性分攤)</h2>
                     
                     <!-- 匯率換算與新增表單 -->
                     <form id="expense-form" class="space-y-4 border-b border-gray-200 pb-4 mb-4">
                         <h3 class="text-xl font-bold text-gray-800">新增費用</h3>
+
+                        <!-- 訊息顯示區塊 (用於取代 alert) -->
+                        <div id="form-message" class="hidden p-3 rounded-lg text-center font-semibold border"></div>
 
                         <div>
                             <label for="description" class="block text-sm font-medium text-gray-700">項目描述:</label>
@@ -828,14 +826,22 @@
                             <label for="krwAmount" class="block text-sm font-medium text-gray-700">韓元金額 (KRW):</label>
                             <input type="number" id="krwAmount" required class="mt-1 block w-full border-gray-300 bg-white text-gray-900 rounded-lg shadow-sm focus:ring-primary-blue focus:border-primary-blue p-2" min="1">
                         </div>
+                        
+                        <!-- ⚡️ 新增：分攤參與者勾選區塊 -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">誰參與分攤 (參與者，請勾選):</label>
+                            <div id="participant-checkboxes" class="grid grid-cols-2 gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                ${participantCheckboxesHtml}
+                            </div>
+                        </div>
+                        <!-- ⚡️ END 新增 -->
 
-                        <!-- 調整匯率換算區塊的背景和文字顏色 -->
                         <div id="twd-conversion" class="text-lg font-semibold text-green-700 bg-green-50 p-3 rounded-lg text-center border border-green-200">
                             ≈ 0 TWD (匯率: 1 KRW ≈ ${KRW_TO_TWD_RATE.toFixed(3)} TWD)
                         </div>
 
                         <button type="submit" class="w-full bg-primary-blue text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-150 transform hover:scale-[1.01] shadow-lg">
-                            新增費用 (4人平均分攤)
+                            新增費用 (動態分攤)
                         </button>
                     </form>
 
@@ -866,7 +872,7 @@
             window.renderExpenseList();
         };
 
-        // 匯率換算即時更新
+        // 匯率換算即時更新 (未變動)
         function updateTwdConversion() {
             const krw = parseFloat(document.getElementById('krwAmount').value) || 0;
             const twd = krw * KRW_TO_TWD_RATE;
@@ -879,14 +885,26 @@
             }
         }
         
-        // 費用儲存處理
+        // 費用儲存處理 (已更新，加入 forUsers)
         async function handleExpenseSubmit(e) {
             e.preventDefault();
             const krwAmount = parseFloat(document.getElementById('krwAmount').value);
             const description = document.getElementById('description').value.trim();
             const payer = document.getElementById('payer').value;
 
-            if (!krwAmount || !description || !payer) return;
+            // ⚡️ 獲取被勾選的參與者
+            const checkboxes = document.querySelectorAll('input[name="participant"]:checked');
+            const forUsers = Array.from(checkboxes).map(cb => cb.value);
+
+            if (!krwAmount || !description || !payer) {
+                displayMessage('請填寫所有必填欄位 (描述、付款人、金額)。', 'error');
+                return;
+            }
+
+            if (forUsers.length === 0) {
+                displayMessage('請至少選擇一位參與者進行費用分攤。', 'error');
+                return;
+            }
 
             const twdAmount = krwAmount * KRW_TO_TWD_RATE;
 
@@ -894,65 +912,101 @@
                 krw: krwAmount,
                 twd: twdAmount,
                 description: description,
-                payer: payer, // 新增付款人
+                payer: payer, 
+                forUsers: forUsers, // ⚡️ 新增欄位
                 userId: window.state.userId,
             };
 
             const success = await window.saveExpense(newExpense);
             if (success) {
+                displayMessage('費用新增成功！', 'success');
                 const expenseForm = document.getElementById('expense-form');
                 if(expenseForm) expenseForm.reset();
+                // 重設轉換顯示
                 const twdConversionElement = document.getElementById('twd-conversion');
                 if(twdConversionElement) twdConversionElement.innerHTML = `
                     ≈ 0 TWD 
                     <span class="text-xs font-normal opacity-75">(匯率: 1 KRW ≈ ${KRW_TO_TWD_RATE.toFixed(3)} TWD)</span>
                 `;
+                // 重設參與者為全選
+                checkboxes.forEach(cb => cb.checked = true);
+            } else {
+                displayMessage('費用儲存失敗，請檢查連線。', 'error');
             }
         }
 
-        // 分帳邏輯計算
+        // 分帳邏輯計算 (已更新，支援動態分攤人數)
         function calculateSplit(expenses) {
             if (expenses.length === 0) {
                 return { totalTWD: 0, totalKRW: 0, summary: {} };
             }
 
-            const totalTWD = expenses.reduce((sum, exp) => sum + exp.twd, 0);
-            const sharePerPerson = totalTWD / USERS.length;
-            const summary = {};
+            let totalTWD = 0;
+            let totalKRW = 0;
 
+            const totalPaid = {}; // 記錄每人付了多少
+            const totalShare = {}; // 記錄每人應負擔多少
+
+            // 初始化所有使用者的 Paid 和 Share
             USERS.forEach(user => {
-                const twdPaid = expenses
-                    .filter(exp => exp.payer === user)
-                    .reduce((sum, exp) => sum + exp.twd, 0);
+                totalPaid[user] = 0;
+                totalShare[user] = 0;
+            });
 
-                const balance = twdPaid - sharePerPerson; // 正數：應收回 / 負數：應支付
+            expenses.forEach(exp => {
+                totalTWD += exp.twd;
+                totalKRW += exp.krw;
+                
+                // 1. 記錄付款
+                totalPaid[exp.payer] += exp.twd;
 
+                // 2. 計算每筆費用的分攤金額
+                const numParticipants = exp.forUsers.length;
+                if (numParticipants > 0) {
+                    const costPerShare = exp.twd / numParticipants;
+
+                    // 3. 記錄參與者的應負擔
+                    exp.forUsers.forEach(user => {
+                        // 只有在用戶列表中且是本次參與者才計算
+                        if (USERS.includes(user)) {
+                            totalShare[user] += costPerShare;
+                        }
+                    });
+                }
+            });
+            
+            // 4. 計算最終餘額 (Paid - Share)
+            const summary = {};
+            USERS.forEach(user => {
+                const balance = totalPaid[user] - totalShare[user];
                 summary[user] = {
-                    paid: twdPaid,
-                    share: sharePerPerson,
+                    paid: totalPaid[user],
+                    share: totalShare[user],
                     balance: balance,
                     status: balance > 0.1 ? '應收回' : (balance < -0.1 ? '應支付' : '已結清')
                 };
             });
 
+            // 調整回傳值，移除固定的 sharePerPerson，因為現在是動態的
             return {
                 totalTWD: totalTWD,
-                totalKRW: expenses.reduce((sum, exp) => sum + exp.krw, 0),
+                totalKRW: totalKRW,
                 summary: summary,
-                sharePerPerson: sharePerPerson
+                // totalShare: totalShare, // (偵錯用)
+                // totalPaid: totalPaid // (偵錯用)
             };
         }
 
-        // 渲染費用總結
+        // 渲染費用總結 (已更新，移除固定的分攤金額顯示)
         window.renderExpenseSummary = () => {
             const summaryContainer = document.getElementById('expense-summary');
             if (!summaryContainer) return;
 
-            const { totalTWD, totalKRW, summary, sharePerPerson } = calculateSplit(window.state.expenses);
+            const { totalTWD, summary } = calculateSplit(window.state.expenses);
 
             if (window.state.expenses.length === 0) {
                 summaryContainer.innerHTML = `
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">分帳總結 (4人)</h3>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">分帳總結</h3>
                     <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-500 border border-gray-200">
                         目前無費用紀錄，無需結算。
                     </div>
@@ -962,31 +1016,32 @@
 
             let summaryHtml = `
                 <h3 class="text-xl font-bold text-gray-800 mb-3 flex justify-between items-center">
-                    分帳總結 (4人)
+                    分帳總結 (共 ${USERS.length} 人)
                     <span class="text-sm font-normal text-primary-blue bg-blue-100 px-2 py-1 rounded-full">總支出: NT$ ${totalTWD.toFixed(0)}</span>
                 </h3>
+                
                 <div class="bg-primary-blue text-white p-3 rounded-t-lg shadow-inner flex justify-between font-bold">
-                    <span>每人應分攤:</span>
-                    <span>NT$ ${sharePerPerson.toFixed(0)}</span>
+                    <span>人員</span>
+                    <span>應收/應付餘額</span>
                 </div>
-                <!-- 調整總結列表背景和分隔線顏色 -->
+
                 <div class="bg-gray-50 border border-gray-200 rounded-b-lg divide-y divide-gray-200">
             `;
 
             USERS.forEach(user => {
                 const userSummary = summary[user];
                 const balanceClass = userSummary.balance > 0.1 ? 'text-red-600 font-bold' : (userSummary.balance < -0.1 ? 'text-green-600 font-bold' : 'text-gray-500');
-                const sign = userSummary.balance > 0.1 ? '+$' : (userSummary.balance < -0.1 ? '-$' : '±$');
+                const sign = userSummary.balance > 0.1 ? '應收 ' : (userSummary.balance < -0.1 ? '應付 ' : '已結清');
                 
                 summaryHtml += `
                     <div class="p-3 flex justify-between items-center">
                         <div>
                             <p class="font-semibold text-gray-900">${user}</p>
-                            <p class="text-xs text-gray-500">已付: NT$ ${userSummary.paid.toFixed(0)}</p>
+                            <p class="text-xs text-gray-500">已付: NT$ ${userSummary.paid.toFixed(0)} | 應攤: NT$ ${userSummary.share.toFixed(0)}</p>
                         </div>
                         <div class="${balanceClass} text-lg text-right">
                             ${sign} ${Math.abs(userSummary.balance).toFixed(0)}
-                            <p class="text-xs font-normal ${balanceClass}">${userSummary.status}</p>
+                            <p class="text-xs font-normal ${balanceClass}">(${userSummary.status})</p>
                         </div>
                     </div>
                 `;
@@ -996,7 +1051,7 @@
             summaryContainer.innerHTML = summaryHtml;
         };
 
-        // 渲染費用清單
+        // 渲染費用清單 (已更新，顯示分攤給誰)
         window.renderExpenseList = () => {
             const list = document.getElementById('expense-list');
             if (!list) return; // 確保在分頁上
@@ -1013,10 +1068,18 @@
                 const item = document.createElement('div');
                 // 調整費用清單項目的背景和文字顏色
                 item.className = 'flex justify-between items-center bg-gray-100 p-3 rounded-lg border border-gray-200 hover:bg-gray-200 transition duration-150';
+                
+                const participantsText = expense.forUsers && expense.forUsers.length > 0
+                    ? `分攤給: ${expense.forUsers.join(', ')}`
+                    : '未選擇參與者'; // 處理舊數據或未選中情況
+
                 item.innerHTML = `
                     <div>
                         <p class="font-medium text-gray-900">${expense.description}</p>
-                        <p class="text-sm text-gray-600">付款人: ${expense.payer} | ${expense.krw.toLocaleString('ko-KR')} KRW</p>
+                        <p class="text-sm text-gray-600">
+                            付款人: ${expense.payer} | ${expense.krw.toLocaleString('ko-KR')} KRW
+                            <span class="ml-2 text-primary-blue/80 font-medium">| ${participantsText}</span>
+                        </p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <p class="text-lg font-bold text-green-600">NT$ ${expense.twd.toFixed(0)}</p>
